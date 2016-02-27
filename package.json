@@ -4,6 +4,7 @@
   "description": "",
   "main": "checkserver.js",
   "scripts": {
+    "start": "node checkserver.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "LabCode",
