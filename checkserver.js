@@ -43,6 +43,8 @@ app.get('/update', function(req, res) {
 
 })
 
-app.listen(3000, function () {
-  console.log('CheckServer listening on port 3000!');
+var port = process.env.PORT || 3000;
+
+app.listen(port, function () {
+  console.log('CheckServer listening on port ' + port + '!');
 });
