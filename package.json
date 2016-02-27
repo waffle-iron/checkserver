@@ -1,0 +1,14 @@
+{
+  "name": "checkserver",
+  "version": "1.0.0",
+  "description": "",
+  "main": "checkserver.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "LabCode",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.13.4"
+  }
+}
