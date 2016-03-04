@@ -1,3 +1,8 @@
+var http = require('http');
+var util = require('util');
+var app_port = process.env.app_port || 3000;
+var app_host = process.env.app_host || '127.0.0.1';
+
 var express = require('express');
 var app = express();
 
@@ -43,8 +48,4 @@ app.get('/update', function(req, res) {
 
 })
 
-var port = process.env.PORT || 3000;
-
-app.listen(port, function () {
-  console.log('CheckServer listening on port ' + port + '!');
-});
+console.log('Web server running at http://' + app_host + ':' + app_port);
