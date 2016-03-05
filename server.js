@@ -3,11 +3,10 @@ var util = require('util');
 var app_port = process.env.app_port || 3000;
 var app_host = process.env.app_host || '127.0.0.1';
 
-var express = require('express');
-var app = express();
-
-
 http.createServer(function(req, res) {
+  var express = require('express');
+  var app = express();
+
   var todolist = [
     {
       name:"Bügeln", complete: false,
@@ -50,6 +49,5 @@ http.createServer(function(req, res) {
 
   })
 }).listen(app_port);
-
 
 console.log('Web server running at http://' + app_host + ':' + app_port);
