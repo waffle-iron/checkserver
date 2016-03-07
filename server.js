@@ -10,7 +10,9 @@ var checkapp = fileExists('checkapp/2.0/nv/check.apk') // OUTPUTS: true or false
 console.log(checkapp);
 var app_port = process.env.app_port || 3000;
 var app_host = process.env.app_host || '127.0.0.1';
-
+app.listen(app_port, app_host, function() {
+	console.log("App listen.")
+})
 var todolist = [
   {
     name:"Bügeln", complete: false,
