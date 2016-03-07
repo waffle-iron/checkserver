@@ -10,9 +10,11 @@ var checkapp = fileExists('checkapp/2.0/nv/check.apk') // OUTPUTS: true or false
 console.log(checkapp);
 var app_port = process.env.app_port || 3000;
 var app_host = process.env.app_host || '127.0.0.1';
+
 app.listen(app_port, app_host, function() {
 	console.log("App listen.")
 })
+
 var todolist = [
   {
     name:"Bügeln", complete: false,
@@ -55,11 +57,11 @@ app.get('/update', function(req, res) {
 
 })
 
-http.createServer(function(req, res) {
-    res.writeHead(200, {'Content-Type': 'text/plain'});
-    res.write('Hello World from Cloudnode\n\n');
-    res.end();
-}).listen(app_port);
+//http.createServer(function(req, res) {
+//    res.writeHead(200, {'Content-Type': 'text/plain'});
+//    res.write('Hello World from Cloudnode\n\n');
+//    res.end();
+//s}).listen(app_port);
 
 
 console.log('Web server running at http://' + app_host + ':' + app_port);
