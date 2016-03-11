@@ -1,4 +1,3 @@
-
 var http = require('http');
 var util = require('util');
 //dependencies
@@ -15,53 +14,74 @@ app.listen(app_port, app_host, function() {
 	console.log("App listen.")
 })
 
-var todolist = [
-  {
-    name:"Bügeln", complete: false,
-    name:"Waschen", complete: false
-  }
-]
+var todolist = [{
+	name: "Bügeln",
+	complete: false,
+	name: "Waschen",
+	complete: false
+}]
+app.get('/', function(req, res) {
+	res.send(todolist);
+});
 
-app.get('/', function (req, res) {
-    res.send(todolist);
-  });
-
-app.get('/update', function(req, res) {
-  if(req.query.name && req.query.complete) {
-    var index = todolist.findIndex(function(item) {
-      if (item.name == req.query.name) {
-        return true;
-      }else{
-        return false;
-      }
-    })
-
-    var newItem = {
-    name: req.query.name,
-    complete: req.query.complete
-    }
-
-    if (index == -1) {
-    todolist.push(newItem);
-    res.send("Angelegt");
-  }else{
-    //Overwrite Array index
-    todolist[index] = newItem;
-    res.send("Updated");
-  }
-
-
-  } else {
-    res.send('Error!');
-  }
+app.get('/delete', function(req, res) {
+			if (req.query.name) {
+				var index = todolist.findIndex(function(item) {
+					if (item.name == req.query.name) {
+						return true;
+					} else {
+						return false;
+					}
 
 })
 
-//http.createServer(function(req, res) {
-//    res.writeHead(200, {'Content-Type': 'text/plain'});
-//    res.write('Hello World from Cloudnode\n\n');
-//    res.end();
-//s}).listen(app_port);
+	todolist.splice(index, 1);
+	res.send(todolist);
 
 
-console.log('Web server running at http://' + app_host + ':' + app_port);
+
+} else {
+res.send('Error of Data!');
+}
+
+				});
+
+				app.get('/update', function(req, res) {
+					if (req.query.name && req.query.complete) {
+						var index = todolist.findIndex(function(item) {
+							if (item.name == req.query.name) {
+								return true;
+							} else {
+								return false;
+							}
+						})
+
+						var newItem = {
+							name: req.query.name,
+							complete: req.query.complete
+						}
+
+						if (index == -1) {
+							todolist.push(newItem);
+							res.send("Angelegt");
+						} else {
+							//Overwrite Array index
+							todolist[index] = newItem;
+							res.send("Updated");
+						}
+
+
+					} else {
+						res.send('Error!');
+					}
+
+				})
+
+				//http.createServer(function(req, res) {
+				//    res.writeHead(200, {'Content-Type': 'text/plain'});
+				//    res.write('Hello World from Cloudnode\n\n');
+				//    res.end();
+				//s}).listen(app_port);
+
+
+				console.log('Web server running at http://' + app_host + ':' + app_port);
