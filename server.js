@@ -74,7 +74,7 @@ app.get('/update', function(req, res) {
 });
 app.get('/newversion', function(req, res) {
       //Update
-      request('https://checkapp.labcode.de/install/1.2/newversion.txt', function(error, response, body) {
+      request('https://checkapp.labcode.de/update/2.0/newversion.txt', function(error, response, body) {
         if (!error && response.statusCode == 200) {
           //New Version
           res.send("New Version"); // Show New Version on Page /newversion
