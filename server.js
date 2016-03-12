@@ -83,7 +83,7 @@ app.get('/newversion', function(req, res) {
           res.send("No New Version"); //Show No New Version on Page /newversion
         }
       });
-    }
+    });
     //http.createServer(function(req, res) {
     //    res.writeHead(200, {'Content-Type': 'text/plain'});
     //    res.write('Hello World from Cloudnode\n\n');
