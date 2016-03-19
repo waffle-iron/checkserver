@@ -4,6 +4,7 @@ var util = require('util');
 var express = require('express');
 var app = express();
 var request = require('request');
+var bodyParser = require('body-parser');
 
 //CORS middleware
 var allowCrossDomain = function(req, res, next) {
@@ -15,6 +16,7 @@ var allowCrossDomain = function(req, res, next) {
 }
 
 app.use(allowCrossDomain)
+app.use(bodyParser.json()); // for parsing application/json
 
 var app_port = process.env.app_port || 3000;
 var app_host = process.env.app_host || '127.0.0.1';
@@ -33,11 +35,12 @@ var todolist = [{
   icon: "img/buegeln.svg"
 }
 ]
+
 app.get('/', function(req, res) {
   res.send(todolist);
 });
 
-app.get('/delete', function(req, res) {
+app.delete('/delete', function(req, res) {
   if (req.query.name) {
     var index = todolist.findIndex(function(item) {
       if (item.name == req.query.name) {
@@ -56,20 +59,18 @@ app.get('/delete', function(req, res) {
 
 });
 
-app.get('/update', function(req, res) {
-  if (req.query.name && req.query.complete) {
+app.put('/update', function(req, res) {
+  var newItem = req.body
+
+  if (newItem.name !== undefined && newItem.complete !== undefined && newItem.icon !== undefined) {
+    console.log("TEST")
     var index = todolist.findIndex(function(item) {
-      if (item.name == req.query.name) {
+      if (item.name == newItem.name) {
         return true;
       } else {
         return false;
       }
     })
-
-    var newItem = {
-      name: req.query.name,
-      complete: req.query.complete
-    }
 
     if (index == -1) {
       todolist.push(newItem);
@@ -79,10 +80,9 @@ app.get('/update', function(req, res) {
       todolist[index] = newItem;
       res.send("Updated");
     }
-
-
   } else {
-    res.send('Error!');
+    console.log("WHY")
+    res.send('Data Error!');
   }
 
 });

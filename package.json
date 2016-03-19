@@ -10,6 +10,7 @@
   "author": "LabCode",
   "license": "ISC",
   "dependencies": {
+    "body-parser": "^1.15.0",
     "express": "^4.13.4",
     "request": "^2.69.0"
   }
