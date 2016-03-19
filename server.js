@@ -5,16 +5,25 @@ var express = require('express');
 var app = express();
 var request = require('request');
 
+//CORS middleware
+var allowCrossDomain = function(req, res, next) {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+    res.header('Access-Control-Allow-Headers', 'Content-Type');
+
+    next();
+}
+
+app.use(allowCrossDomain)
+
 var app_port = process.env.app_port || 3000;
 var app_host = process.env.app_host || '127.0.0.1';
 
 app.listen(app_port, app_host, function() {
-  console.log("App listen.")
+  console.log("App listen on Port " + app_port)
 })
 
 var todolist = [{
-  name: "Bügeln",
-  complete: false,
   name: "Waschen",
   complete: false
 }]
@@ -31,8 +40,7 @@ app.get('/delete', function(req, res) {
         return false;
       }
 
-    })
-
+    });
     todolist.splice(index, 1);
     res.send(todolist);
 
@@ -89,6 +97,3 @@ app.get('/newversion', function(req, res) {
     //    res.write('Hello World from Cloudnode\n\n');
     //    res.end();
     //s}).listen(app_port);
-
-
-    console.log('Web server running at http://' + app_host + ':' + app_port);
