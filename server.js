@@ -14,6 +14,8 @@ var allowCrossDomain = function(req, res, next) {
     next();
 }
 
+app.use(allowCrossDomain)
+
 var app_port = process.env.app_port || 3000;
 var app_host = process.env.app_host || '127.0.0.1';
 
