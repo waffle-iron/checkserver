@@ -14,8 +14,6 @@ var allowCrossDomain = function(req, res, next) {
     next();
 }
 
-app.use(allowCrossDomain)
-
 var app_port = process.env.app_port || 3000;
 var app_host = process.env.app_host || '127.0.0.1';
 
@@ -25,8 +23,14 @@ app.listen(app_port, app_host, function() {
 
 var todolist = [{
   name: "Waschen",
-  complete: false
-}]
+  complete: false,
+  icon: "img/waschen.svg"
+},{
+  name: "Bügeln",
+  complete: false,
+  icon: "img/buegeln.svg"
+}
+]
 app.get('/', function(req, res) {
   res.send(todolist);
 });
