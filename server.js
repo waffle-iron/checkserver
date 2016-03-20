@@ -41,9 +41,11 @@ app.get('/', function(req, res) {
 });
 
 app.delete('/delete', function(req, res) {
-  if (req.query.name) {
+  var delItem = req.body
+  //Prüfung ob alle Daten da sind
+  if (delItem.name !== undefined) {
     var index = todolist.findIndex(function(item) {
-      if (item.name == req.query.name) {
+      if (item.name == delItem.name) {
         return true;
       } else {
         return false;
@@ -63,7 +65,6 @@ app.put('/update', function(req, res) {
   var newItem = req.body
 
   if (newItem.name !== undefined && newItem.complete !== undefined && newItem.icon !== undefined) {
-    console.log("TEST")
     var index = todolist.findIndex(function(item) {
       if (item.name == newItem.name) {
         return true;
@@ -74,14 +75,13 @@ app.put('/update', function(req, res) {
 
     if (index == -1) {
       todolist.push(newItem);
-      res.send("Angelegt");
+      res.send("Angelegt, " + todolist);
     } else {
       //Overwrite Array index
       todolist[index] = newItem;
-      res.send("Updated");
+      res.send("Updated<br /> " + todolist);
     }
   } else {
-    console.log("WHY")
     res.send('Data Error!');
   }
 
