@@ -8,11 +8,11 @@ var bodyParser = require('body-parser');
 
 //CORS middleware
 var allowCrossDomain = function(req, res, next) {
-    res.header('Access-Control-Allow-Origin', '*');
-    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-    res.header('Access-Control-Allow-Headers', 'Content-Type');
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+  res.header('Access-Control-Allow-Headers', 'Content-Type');
 
-    next();
+  next();
 }
 
 app.use(allowCrossDomain)
@@ -29,12 +29,11 @@ var todolist = [{
   name: "Waschen",
   complete: false,
   icon: "img/waschen.svg"
-},{
+}, {
   name: "Bügeln",
   complete: false,
   icon: "img/buegeln.svg"
-}
-]
+}]
 
 app.get('/', function(req, res) {
   res.send(todolist);
@@ -42,7 +41,7 @@ app.get('/', function(req, res) {
 
 app.delete('/delete', function(req, res) {
   var delItem = req.body
-  //Prüfung ob alle Daten da sind
+    //Prüfung ob alle Daten da sind
   if (delItem.name !== undefined) {
     var index = todolist.findIndex(function(item) {
       if (item.name == delItem.name) {
@@ -87,19 +86,19 @@ app.put('/update', function(req, res) {
 
 });
 app.get('/newversion', function(req, res) {
-      //Update
-      request('https://checkapp.labcode.de/update/2.0/newversion.txt', function(error, response, body) {
-        if (!error && response.statusCode == 200) {
-          //New Version
-          res.send("New Version"); // Show New Version on Page /newversion
-        } else {
-          //No new Version
-          res.send("No New Version"); //Show No New Version on Page /newversion
-        }
-      });
-    });
-    //http.createServer(function(req, res) {
-    //    res.writeHead(200, {'Content-Type': 'text/plain'});
-    //    res.write('Hello World from Cloudnode\n\n');
-    //    res.end();
-    //s}).listen(app_port);
+  //Update
+  request('http://entwicklung.intern.labcode.de/checkapp/3.0/newversion.txt', function(error, response, body) {
+    if (!error && response.statusCode == 200) {
+      //New Version
+      res.send("New Version"); // Show New Version on Page /newversion
+    } else {
+      //No new Version
+      res.send("No New Version"); //Show No New Version on Page /newversion
+    }
+  });
+});
+//http.createServer(function(req, res) {
+//    res.writeHead(200, {'Content-Type': 'text/plain'});
+//    res.write('Hello World from Cloudnode\n\n');
+//    res.end();
+//s}).listen(app_port);
