@@ -85,17 +85,23 @@ app.put('/update', function(req, res) {
   }
 
 });
-app.get('/newversion', function(req, res) {
-  //Update
-  request('http://entwicklung.intern.labcode.de/checkapp/3.0/newversion.txt', function(error, response, body) {
-    if (!error && response.statusCode == 200) {
-      //New Version
-      res.send("New Version"); // Show New Version on Page /newversion
-    } else {
-      //No new Version
-      res.send("No New Version"); //Show No New Version on Page /newversion
-    }
-  });
+app.put('/newversion', function(req, res) {
+  var informations = req.body
+
+  if (informations.appversion !== undefined) {
+    request('http://entwicklung.intern.labcode.de/checkapp/'+ informations.appversion +'/newversion.txt', function(error, response, body) {
+      if (!error && response.statusCode == 200) {
+        //New Version
+        res.send("New Version"); // Show New Version on Page /newversion
+      } else {
+        //No new Version
+        res.send("No New Version"); //Show No New Version on Page /newversion
+      }
+    });
+  }
+  else {
+    res.send("Data Error")
+  }
 });
 //http.createServer(function(req, res) {
 //    res.writeHead(200, {'Content-Type': 'text/plain'});
