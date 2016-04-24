@@ -89,7 +89,7 @@ app.put('/newversion', function(req, res) {
   var informations = req.body
 
   if (informations.appversion !== undefined) {
-    request('http://entwicklung.intern.labcode.de/checkapp/'+ informations.appversion +'/newversion.txt', function(error, response, body) {
+    request('http://entwicklung.intern.labcode.de/checkapp/'+ informations.appversion +'/newversion'+ informations.appversion +'.txt', function(error, response, body) {
       if (!error && response.statusCode == 200) {
         //New Version
         res.send("New Version"); // Show New Version on Page /newversion
