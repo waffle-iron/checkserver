@@ -26,7 +26,7 @@ myFirebaseRefRoot.authWithCustomToken(token, function(error, authData) {
   if (error) {
     console.log("Login Failed!", error);
   } else {
-    console.log("Login Succeeded!", authData);
+    console.log("Login Succeeded!");
   }
 });
 
@@ -100,18 +100,8 @@ app.delete('/delete', function(req, res) {
 
 app.put('/update', function(req, res) {
   var newItem = req.body
-
+console.log(req.body)
   if (newItem.name !== undefined && newItem.status !== undefined && newItem.icon !== undefined) {
-    var index = todolist.findIndex(function(item) {
-      if (item.name == newItem.name) {
-        return true;
-      } else {
-        return false;
-      }
-    })
-
-    if (index == -1) {
-      todolist.push(newItem);
         // Firebase
        var tilesRef = myFirebaseRef.child(newItem.name);
        tilesRef.set({
@@ -119,12 +109,8 @@ app.put('/update', function(req, res) {
            icon: newItem.icon,
            status: newItem.status
        });
-      res.send("Angelegt, " + todolist);
-    } else {
-      //Overwrite Array index
-      todolist[index] = newItem;
-      res.send("Updated<br /> " + todolist);
-    }
+      res.send("Angelegt");
+
   } else {
     res.send('Data Error!');
   }
