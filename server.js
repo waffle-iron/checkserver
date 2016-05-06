@@ -100,7 +100,6 @@ app.delete('/delete', function(req, res) {
 
 app.put('/update', function(req, res) {
   var newItem = req.body
-console.log(req.body)
   if (newItem.name !== undefined && newItem.status !== undefined && newItem.icon !== undefined) {
         // Firebase
        var tilesRef = myFirebaseRef.child(newItem.name);
