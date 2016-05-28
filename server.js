@@ -5,6 +5,7 @@ var express = require('express')
 var app = express()
 var request = require('request')
 var bodyParser = require('body-parser')
+var morgan = require('morgan')
 
 // Firebase
 var Firebase = require('firebase')
@@ -40,10 +41,11 @@ var allowCrossDomain = function (req, res, next) {
 }
 
 app.use(allowCrossDomain)
+app.use(morgan("combined"))
 app.use(bodyParser.json()) // for parsing application/json
 
 var app_port = process.env.app_port || 3000
-var app_host = process.env.app_host || '127.0.0.1'
+var app_host = process.env.app_host || '0.0.0.0'
 
 app.listen(app_port, app_host, function () {
   console.log('App listen on Port ' + app_port)
