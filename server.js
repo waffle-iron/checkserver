@@ -6,11 +6,14 @@ var app = express()
 var request = require('request')
 var bodyParser = require('body-parser')
 var morgan = require('morgan')
+var passport = require('passport')
+var BasicStrategy = require('passport-http').BasicStrategy
+var crypto = require('crypto');
 
 // Firebase
 var Firebase = require('firebase')
 var myFirebaseRef = new Firebase('https://checkserver.firebaseio.com/tiles')
-var myFirebaseRefRoot = new Firebase('https://checkserver.firebaseio.com/')
+var myFirebaseRefUsers = new Firebase('https://checkserver.firebaseio.com/users')
 
 var FirebaseTokenGenerator = require('firebase-token-generator')
 var tokenGenerator = new FirebaseTokenGenerator(process.env.firebasesecret)
@@ -23,7 +26,7 @@ myFirebaseRef.authWithCustomToken(token, function (error, authData) {
     console.log('Login Succeeded!', authData)
   }
 })
-myFirebaseRefRoot.authWithCustomToken(token, function (error, authData) {
+myFirebaseRefUsers.authWithCustomToken(token, function (error, authData) {
   if (error) {
     console.log('Login Failed!', error)
   } else {
@@ -34,8 +37,8 @@ myFirebaseRefRoot.authWithCustomToken(token, function (error, authData) {
 // CORS middleware
 var allowCrossDomain = function (req, res, next) {
   res.header('Access-Control-Allow-Origin', '*')
-  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE')
-  res.header('Access-Control-Allow-Headers', 'Content-Type')
+  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
+  res.header('Access-Control-Allow-Headers', 'Content-Type,Authorization')
 
   next()
 }
@@ -43,6 +46,7 @@ var allowCrossDomain = function (req, res, next) {
 app.use(allowCrossDomain)
 app.use(morgan("combined"))
 app.use(bodyParser.json()) // for parsing application/json
+app.use(passport.initialize())
 
 var app_port = process.env.app_port || 3000
 var app_host = process.env.app_host || '0.0.0.0'
@@ -50,7 +54,28 @@ var app_host = process.env.app_host || '0.0.0.0'
 app.listen(app_port, app_host, function () {
   console.log('App listen on Port ' + app_port)
 })
-app.get('/', function (req, res) {
+passport.use(new BasicStrategy({
+  },
+  function(username, password, done) {
+    process.nextTick(function () {
+      myFirebaseRefUsers.on('value', function (snapshot) {
+      var y = snapshot.val()
+        if (y.hasOwnProperty(username)) {
+          var md5pass = crypto.createHash('md5').update(password).digest('hex');
+          if(md5pass === y[username].pass) {
+            done(null, true)
+          } else {
+            done(null, false)
+          }
+        } else {
+          done(null, false)
+        }
+    })
+    })
+  }
+));
+
+app.get('/', passport.authenticate('basic', { session: false }), function (req, res) {
   var titlelist = ''
   var i = 0
   myFirebaseRef.on('value', function (snapshot) {
@@ -77,7 +102,7 @@ app.get('/', function (req, res) {
   res.send(titlelista)
 })
 
-app.delete('/delete', function (req, res) {
+app.delete('/delete', passport.authenticate('basic', { session: false }), function (req, res) {
   var delItem = req.body
   // Prüfung ob alle Daten da sind
   if (delItem.name !== undefined) {
@@ -89,7 +114,7 @@ app.delete('/delete', function (req, res) {
   }
 })
 
-app.put('/update', function (req, res) {
+app.put('/update', passport.authenticate('basic', { session: false }), function (req, res) {
   var newItem = req.body
   if (newItem.name !== undefined && newItem.status !== undefined && newItem.icon !== undefined) {
     // Firebase
@@ -104,7 +129,7 @@ app.put('/update', function (req, res) {
     res.send('Data Error!')
   }
 })
-app.put('/newversion', function (req, res) {
+app.put('/newversion', passport.authenticate('basic', { session: false }), function (req, res) {
   var informations = req.body
 
   if (informations.appversion !== undefined) {
@@ -121,8 +146,48 @@ app.put('/newversion', function (req, res) {
     res.send('Data Error')
   }
 })
-// http.createServer(function(req, res) {
-//    res.writeHead(200, {'Content-Type': 'text/plain'})
-//    res.write('Hello World from Cloudnode\n\n')
-//    res.end()
-// s}).listen(app_port)
+app.put('/register', passport.authenticate('basic', { session: false }), function (req, res) {
+  var data = req.body
+  if (data.pass !== undefined && data.name !== undefined && data.email !== undefined) {
+    var regun = 1
+    myFirebaseRefUsers.on('value', function (snapshotu) {
+      var v = snapshotu.val()
+      var regi = 1
+      while (v.hasOwnProperty(regi)) {
+        regun++
+        regi++
+      }
+    })
+    res.sendStatus(regun)
+    var usersRef = myFirebaseRefUsers.child(regun)
+    usersRef.set({
+      pass: data.pass,
+      name: data.name,
+      email: data.email
+    })
+  } else {
+    res.send('Data Error')
+  }
+})
+app.put('/userdata', passport.authenticate('basic', { session: false}), function (req, res) {
+  var data = req.body
+  if (data.email !== undefined) {
+    var userdata = ''
+    myFirebaseRefUsers.on('value', function (snapshot) {
+      var y = snapshot.val()
+      for (var k in y) {
+        if (y.hasOwnProperty(k)) {
+          if(y[k].email === data.email) {
+            userdata = userdata + '{'
+            userdata = userdata + '"username":"' + k + '"'
+            userdata = userdata + ', "email":"' + y[k].email + '"'
+            userdata = userdata + ', "name":"' + y[k].name + '"'
+            userdata = userdata + '}'
+          }
+        }
+      }
+    })
+    var userdataa = JSON.parse('[' + userdata + ']')
+    res.send(userdataa)
+  }
+})
