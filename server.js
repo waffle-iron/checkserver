@@ -171,23 +171,31 @@ app.put('/register', passport.authenticate('basic', { session: false }), functio
 })
 app.put('/userdata', passport.authenticate('basic', { session: false}), function (req, res) {
   var data = req.body
-  if (data.email !== undefined) {
+  if (data.email !== undefined && data.pass !== undefined) {
     var userdata = ''
+    var passr = false
     myFirebaseRefUsers.on('value', function (snapshot) {
       var y = snapshot.val()
       for (var k in y) {
         if (y.hasOwnProperty(k)) {
           if(y[k].email === data.email) {
-            userdata = userdata + '{'
-            userdata = userdata + '"username":"' + k + '"'
-            userdata = userdata + ', "email":"' + y[k].email + '"'
-            userdata = userdata + ', "name":"' + y[k].name + '"'
-            userdata = userdata + '}'
+            if(y[k].pass === data.pass) {
+              passr = true
+              userdata = userdata + '{'
+              userdata = userdata + '"username":"' + k + '"'
+              userdata = userdata + ', "email":"' + y[k].email + '"'
+              userdata = userdata + ', "name":"' + y[k].name + '"'
+              userdata = userdata + '}'
+           }
           }
         }
       }
     })
+    if(passr) {
     var userdataa = JSON.parse('[' + userdata + ']')
     res.send(userdataa)
+  } else {
+    res.sendStatus(400)
+  }
   }
 })
