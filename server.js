@@ -158,7 +158,7 @@ app.put('/register', passport.authenticate('basic', { session: false }), functio
         regi++
       }
     })
-    res.sendStatus(regun)
+    res.send('' + regun)
     var usersRef = myFirebaseRefUsers.child(regun)
     usersRef.set({
       pass: data.pass,
