@@ -31,7 +31,7 @@ app.use(morgan("combined"))
 app.use(bodyParser.json()) // for parsing application/json
 app.use(passport.initialize())
 
-var app_port = process.env.app_port || 3000
+var app_port = process.env.app_port || 61765
 var app_host = process.env.app_host || '0.0.0.0'
 
 app.listen(app_port, app_host, function () {
