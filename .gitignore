@@ -1,3 +1,5 @@
+
+node_modules
 =======
 # Logs
 logs
@@ -32,7 +34,10 @@ node_modules
 
 # Optional REPL history
 .node_repl_history
+<<<<<<< HEAD
 
 # IntelliJ IDEA
 .idea/
 firebase.json
+=======
+>>>>>>> parent of ec8c3ed... Use New Firebase
