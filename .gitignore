@@ -35,3 +35,4 @@ node_modules
 
 # IntelliJ IDEA
 .idea/
+firebase.json
