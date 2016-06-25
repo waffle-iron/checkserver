@@ -13,7 +13,7 @@ var crypto = require('crypto');
 // Firebase
 var firebase = require('firebase')
 firebase.initializeApp({
-  serviceAccount: "/home/labcode/nodejs/checkserver/.firebase.json",
+  serviceAccount: ".firebase.json",
   databaseURL: "https://checkserver.firebaseio.com"
 })
 
@@ -189,5 +189,17 @@ app.put('/userdata', passport.authenticate('basic', { session: false }), functio
     })
   } else {
     res.send('Data Error')
+  }
+})
+app.put('/allowedlists', passport.authenticate('basic', { session: false }), function (req, res) {
+  var data = req.body;
+  if(data.userid !== undefined) {
+    var usersRef = firebase.database().ref('users/' + data.userid + '/lists')
+    usersRef.once('value', function (snapshot) {
+      var y = snapshot.val()
+      for (var k in y) {
+        res.send(y)
+      }
+    })
   }
 })
