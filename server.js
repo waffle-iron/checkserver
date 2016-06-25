@@ -58,39 +58,44 @@ passport.use(new BasicStrategy({},
   }
 ));
 
-app.get('/', passport.authenticate('basic', { session: false }), function (req, res) {
-  var titlelist = ''
-  var i = 0
-  var tilesref = firebase.database().ref('tiles')
-  tilesref.once('value', function (snapshot) {
-    var y = snapshot.val()
-    for (var k in y) {
-      if (y.hasOwnProperty(k)) {
-        i = i + 1
-        if (i === 1) {
-          titlelist = '{'
-          titlelist = titlelist + '"title":"' + k + '"'
-          titlelist = titlelist + ', "status":"' + y[ k ].status + '"'
-          titlelist = titlelist + ', "icon":"' + y[ k ].icon + '"'
-          titlelist = titlelist + '}'
-        } else {
-          titlelist = titlelist + ', { "title":"' + k + '"'
-          titlelist = titlelist + ', "status":"' + y[ k ].status + '"'
-          titlelist = titlelist + ', "icon":"' + y[ k ].icon + '"'
-          titlelist = titlelist + '}'
+app.put('/', passport.authenticate('basic', { session: false }), function (req, res) {
+  var data = req.body
+  if(data.listid !== undefined) {
+    var titlelist = ''
+    var i = 0
+    var tilesref = firebase.database().ref('lists/' + data.listid +'/tiles')
+    tilesref.once('value', function (snapshot) {
+      var y = snapshot.val()
+      for (var k in y) {
+        if (y.hasOwnProperty(k)) {
+          i = i + 1
+          if (i === 1) {
+            titlelist = '{'
+            titlelist = titlelist + '"title":"' + k + '"'
+            titlelist = titlelist + ', "status":"' + y[ k ].status + '"'
+            titlelist = titlelist + ', "icon":"' + y[ k ].icon + '"'
+            titlelist = titlelist + '}'
+          } else {
+            titlelist = titlelist + ', { "title":"' + k + '"'
+            titlelist = titlelist + ', "status":"' + y[ k ].status + '"'
+            titlelist = titlelist + ', "icon":"' + y[ k ].icon + '"'
+            titlelist = titlelist + '}'
+          }
         }
       }
-    }
-    var titlelista = JSON.parse('[' + titlelist + ']')
-    res.send(titlelista)
-  })
+      var titlelista = JSON.parse('[' + titlelist + ']')
+      res.send(titlelista)
+    })
+  } else {
+    res.send('Data Error!')
+  }
 })
 
 app.delete('/delete', passport.authenticate('basic', { session: false }), function (req, res) {
   var delItem = req.body
   // Prüfung ob alle Daten da sind
-  if (delItem.name !== undefined) {
-    var tilesRef = firebase.database().ref('tiles')
+  if (delItem.name !== undefined && delItem.listid !== undefined) {
+    var tilesRef = firebase.database().ref('lists/' + delItem.listid +'/tiles')
     var tilesChild = tilesRef.child(delItem.name)
     tilesChild.remove()
       .then(function () {
@@ -103,9 +108,9 @@ app.delete('/delete', passport.authenticate('basic', { session: false }), functi
 
 app.put('/update', passport.authenticate('basic', { session: false }), function (req, res) {
   var newItem = req.body
-  if (newItem.name !== undefined && newItem.status !== undefined && newItem.icon !== undefined) {
+  if (newItem.name !== undefined && newItem.status !== undefined && newItem.icon !== undefined && newItem.listid !== undefined) {
     // Firebase
-    var tilesRef = firebase.database().ref('tiles')
+    var tilesRef = firebase.database().ref('lists/' + newItem.listid +'/tiles')
     var tilesChild = tilesRef.child(newItem.name)
     tilesChild.set({
       title: newItem.name,
