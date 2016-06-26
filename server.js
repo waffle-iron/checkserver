@@ -13,8 +13,7 @@ var crypto = require('crypto');
 // Firebase
 var firebase = require('firebase')
 firebase.initializeApp({
-  // serviceAccount: "/home/labcode/nodejs/checkserver/.firebase.json",
-  serviceAccount: ".firebase.json",
+  serviceAccount: process.env.safile,
   databaseURL: "https://checkserver.firebaseio.com"
 })
 
