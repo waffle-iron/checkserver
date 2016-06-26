@@ -13,9 +13,17 @@ var crypto = require('crypto');
 // Firebase
 var firebase = require('firebase')
 firebase.initializeApp({
-  serviceAccount: "/home/labcode/nodejs/checkserver/.firebase.json",
+  // serviceAccount: "/home/labcode/nodejs/checkserver/.firebase.json",
+  serviceAccount: ".firebase.json",
   databaseURL: "https://checkserver.firebaseio.com"
 })
+
+function toObject(arr) {
+  var rv = {};
+  for (var i = 0; i < arr.length; ++i)
+    rv[i] = arr[i];
+  return rv;
+}
 
 // CORS middleware
 var allowCrossDomain = function (req, res, next) {
@@ -59,11 +67,11 @@ passport.use(new BasicStrategy({},
 ));
 
 app.put('/', passport.authenticate('basic', { session: false }), function (req, res) {
-  var data = req.body
-  if(data.listid !== undefined) {
+  var getdata = req.body
+  if(getdata.listid !== undefined) {
     var titlelist = ''
     var i = 0
-    var tilesref = firebase.database().ref('lists/' + data.listid +'/tiles')
+    var tilesref = firebase.database().ref('lists/' + getdata.listid +'/tiles')
     tilesref.once('value', function (snapshot) {
       var y = snapshot.val()
       for (var k in y) {
@@ -110,7 +118,7 @@ app.put('/update', passport.authenticate('basic', { session: false }), function 
   var newItem = req.body
   if (newItem.name !== undefined && newItem.status !== undefined && newItem.icon !== undefined && newItem.listid !== undefined) {
     // Firebase
-    var tilesRef = firebase.database().ref('lists/' + newItem.listid +'/tiles')
+    var tilesRef = firebase.database().ref('lists/' + newItem.listid +'/tiles/')
     var tilesChild = tilesRef.child(newItem.name)
     tilesChild.set({
       title: newItem.name,
@@ -207,4 +215,33 @@ app.put('/allowedlists', passport.authenticate('basic', { session: false }), fun
       }
     })
   }
+})
+app.put('/namelists', passport.authenticate('basic', { session: false }), function (req, res) {
+  var data = req.body;
+  if(data.ids !== undefined) {
+    var namelistslist = ''
+    var idsa = data.ids.split(",");
+    var idso = toObject(idsa)
+    var i = 0;
+        var listsRef = firebase.database().ref('lists/')
+        listsRef.once('value', function (snapshot) {
+          var ki
+          var y = snapshot.val()
+          for (var k in y) {
+            if (k == 1) {
+              namelistslist = '{'
+              namelistslist = namelistslist + '"name":"' + y[k].name + '"'
+              namelistslist = namelistslist + '}'
+            } else {
+              ki = parseInt(k) -1
+              if(idso[ki]){
+              namelistslist = namelistslist + ', { "name":"' + y[k].name + '"'
+              namelistslist = namelistslist + '}'
+              }
+            }
+            }
+          var namelistslista = JSON.parse('[' + namelistslist + ']')
+          res.send(namelistslista)
+        })
+      }
 })
