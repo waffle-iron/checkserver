@@ -209,9 +209,7 @@ app.put('/allowedlists', passport.authenticate('basic', { session: false }), fun
     var usersRef = firebase.database().ref('users/' + data.userid + '/lists')
     usersRef.once('value', function (snapshot) {
       var y = snapshot.val()
-      for (var k in y) {
         res.send(y)
-      }
     })
   }
 })
