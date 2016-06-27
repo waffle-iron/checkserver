@@ -242,3 +242,25 @@ app.put('/namelists', passport.authenticate('basic', { session: false }), functi
         })
       }
 })
+app.put('/addlist', passport.authenticate('basic', { session: false }), function (req, res) {
+  var data = req.body
+  if (data.name !== undefined) {
+    var alun = 1
+    var listsRef = firebase.database().ref('lists')
+    listsRef.once('value', function (snapshot) {
+      var v = snapshot.val()
+      var ali = 1
+      while (v.hasOwnProperty(ali)) {
+        alun++
+        ali++
+      }
+      res.send('' + alun)
+      var listsChild = listsRef.child(alun)
+      listsChild.set({
+        name: data.name
+      })
+    })
+  } else {
+    res.send('Data Error')
+  }
+})
